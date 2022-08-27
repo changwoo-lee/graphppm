@@ -10,19 +10,24 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// rcpp_hello_world
-List rcpp_hello_world();
-RcppExport SEXP _graphppm_rcpp_hello_world() {
+// runcppWilson
+Rcpp::IntegerMatrix runcppWilson(int n, Rcpp::IntegerMatrix graph_edge_list, int rootvertex, Rcpp::IntegerVector ordering, int maxwalk);
+RcppExport SEXP _graphppm_runcppWilson(SEXP nSEXP, SEXP graph_edge_listSEXP, SEXP rootvertexSEXP, SEXP orderingSEXP, SEXP maxwalkSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(rcpp_hello_world());
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type graph_edge_list(graph_edge_listSEXP);
+    Rcpp::traits::input_parameter< int >::type rootvertex(rootvertexSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type ordering(orderingSEXP);
+    Rcpp::traits::input_parameter< int >::type maxwalk(maxwalkSEXP);
+    rcpp_result_gen = Rcpp::wrap(runcppWilson(n, graph_edge_list, rootvertex, ordering, maxwalk));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_graphppm_rcpp_hello_world", (DL_FUNC) &_graphppm_rcpp_hello_world, 0},
+    {"_graphppm_runcppWilson", (DL_FUNC) &_graphppm_runcppWilson, 5},
     {NULL, NULL, 0}
 };
 

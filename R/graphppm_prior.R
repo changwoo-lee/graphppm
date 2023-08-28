@@ -25,7 +25,7 @@ graphppm_prior <- function(graph0, logcohesion, cohesion_param = NULL,
   n = igraph::vcount(graph0)
   m = igraph::ecount(graph0)
   rownames(E0) = 1:m
-  A0 = as_adj(graph0, sparse = F, names = F) # sparse = F, lookup speed is faster in non-sparse form
+  A0 = igraph::as_adj(graph0, sparse = F, names = F) # sparse = F, lookup speed is faster in non-sparse form
   g0 = igraph::graph_from_edgelist(E0, directed = F)
   if(igraph::components(g0)$no > 1) stop("base graph must be connected")
   #adjlist0 = lapply(igraph::as_adj_list(g0), as.integer)

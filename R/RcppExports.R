@@ -17,31 +17,3 @@ runcppWilson <- function(n, graph_edge_list, rootvertex, ordering, maxwalk) {
     .Call('_graphppm_runcppWilson', PACKAGE = 'graphppm', n, graph_edge_list, rootvertex, ordering, maxwalk)
 }
 
-testVertexEdge <- function() {
-    invisible(.Call('_graphppm_testVertexEdge', PACKAGE = 'graphppm'))
-}
-
-testGraph <- function() {
-    invisible(.Call('_graphppm_testGraph', PACKAGE = 'graphppm'))
-}
-
-testSubgraph <- function() {
-    invisible(.Call('_graphppm_testSubgraph', PACKAGE = 'graphppm'))
-}
-
-testMST <- function() {
-    invisible(.Call('_graphppm_testMST', PACKAGE = 'graphppm'))
-}
-
-testMSF <- function() {
-    invisible(.Call('_graphppm_testMSF', PACKAGE = 'graphppm'))
-}
-
-testRST <- function() {
-    invisible(.Call('_graphppm_testRST', PACKAGE = 'graphppm'))
-}
-
-benchmarkComponent <- function(edge_list) {
-    invisible(.Call('_graphppm_benchmarkComponent', PACKAGE = 'graphppm', edge_list))
-}
-

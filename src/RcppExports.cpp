@@ -63,83 +63,12 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// testVertexEdge
-void testVertexEdge();
-RcppExport SEXP _graphppm_testVertexEdge() {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    testVertexEdge();
-    return R_NilValue;
-END_RCPP
-}
-// testGraph
-void testGraph();
-RcppExport SEXP _graphppm_testGraph() {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    testGraph();
-    return R_NilValue;
-END_RCPP
-}
-// testSubgraph
-void testSubgraph();
-RcppExport SEXP _graphppm_testSubgraph() {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    testSubgraph();
-    return R_NilValue;
-END_RCPP
-}
-// testMST
-void testMST();
-RcppExport SEXP _graphppm_testMST() {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    testMST();
-    return R_NilValue;
-END_RCPP
-}
-// testMSF
-void testMSF();
-RcppExport SEXP _graphppm_testMSF() {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    testMSF();
-    return R_NilValue;
-END_RCPP
-}
-// testRST
-void testRST();
-RcppExport SEXP _graphppm_testRST() {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    testRST();
-    return R_NilValue;
-END_RCPP
-}
-// benchmarkComponent
-void benchmarkComponent(IntegerMatrix edge_list);
-RcppExport SEXP _graphppm_benchmarkComponent(SEXP edge_listSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< IntegerMatrix >::type edge_list(edge_listSEXP);
-    benchmarkComponent(edge_list);
-    return R_NilValue;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_graphppm_uppertri_pcm", (DL_FUNC) &_graphppm_uppertri_pcm, 3},
     {"_graphppm_update_uppertri_pcm", (DL_FUNC) &_graphppm_update_uppertri_pcm, 3},
     {"_graphppm_update_uppertri_logpsm", (DL_FUNC) &_graphppm_update_uppertri_logpsm, 4},
     {"_graphppm_runcppWilson", (DL_FUNC) &_graphppm_runcppWilson, 5},
-    {"_graphppm_testVertexEdge", (DL_FUNC) &_graphppm_testVertexEdge, 0},
-    {"_graphppm_testGraph", (DL_FUNC) &_graphppm_testGraph, 0},
-    {"_graphppm_testSubgraph", (DL_FUNC) &_graphppm_testSubgraph, 0},
-    {"_graphppm_testMST", (DL_FUNC) &_graphppm_testMST, 0},
-    {"_graphppm_testMSF", (DL_FUNC) &_graphppm_testMSF, 0},
-    {"_graphppm_testRST", (DL_FUNC) &_graphppm_testRST, 0},
-    {"_graphppm_benchmarkComponent", (DL_FUNC) &_graphppm_benchmarkComponent, 1},
     {NULL, NULL, 0}
 };
 

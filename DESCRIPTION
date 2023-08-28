@@ -18,5 +18,5 @@ Imports:
     matrixStats,
     Rcpp,
     salso
-Depends:
+Depends: 
     igraph

@@ -10,7 +10,7 @@
 #' @param ... 
 #'
 #' @return
-#' @import igraph matrixStats
+#' @import igraph matrixStats doParallel
 #' @export
 #'
 #' @examples

@@ -33,7 +33,7 @@ graphppm_prior <- function(graph0, logcohesion, cohesion_param = NULL,
   
   # initialize patition, default one-block cluster
   if(is.null(z_init)) z_init = rep(1, n)
-  z_init = partition_sort(z_init)
+  z = partition_sort(z_init)
   k = length(unique(z))
   # check contiguity and calculate initial cohesion 
   for(j in 1:k){
@@ -218,9 +218,8 @@ graphppm_prior <- function(graph0, logcohesion, cohesion_param = NULL,
       idx_j = which(z_star==splitting_j) # splitting cluster's vid
       
       treecutidx = c(cutidx, which(sptree_star[,"iscrossing"]==1)) # including already cutted edges
-      tree_igraph = igraph::make_undirected_graph(t(sptree_star[-treecutidx,1:2]), n = n)
       # proposed split
-      z_starstar = igraph::components(tree_igraph)$membership
+      z_starstar = igraph::components(igraph::make_undirected_graph(t(sptree_star[-treecutidx,1:2]), n = n))$membership
       # identify splitted cluster
       splitted_j1j2 = z_starstar[sptree_star[cutidx,1:2]]
       

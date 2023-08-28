@@ -13,7 +13,7 @@
 #' g0 = igraph::make_graph("Zachary")
 #' z = c(1,1,1,1,1,1,1,1,2,2,1,1,1,1,2,2,1,1,2,1,2,1,2,2,2,2,2,2,2,2,2,2,2,2)
 #' E0 = igraph::as_edgelist(g0)
-#' rownames(E0) = 1:ecount(g0)
+#' rownames(E0) = 1:igraph::ecount(g0)
 #' is.crossing(E0, z)
 is.crossing <- function(E0, z) {
   membership_head = z[E0[, 1]]

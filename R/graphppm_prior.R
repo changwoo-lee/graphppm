@@ -20,16 +20,16 @@ graphppm_prior <- function(graph0, logcohesion, cohesion_param = NULL,
   niter = nburn + nthin*nsave 
   
   # input check for graph0
-  if(!is.igraph(graph0)) stop("graph must be an igraph object")
-  n = vcount(graph0)
-  m = ecount(g0)
-  E0 = as_edgelist(graph0, names =F)
+  if(!igraph::is.igraph(graph0)) stop("graph must be an igraph object")
+  n = igraph::vcount(graph0)
+  m = igraph::ecount(g0)
+  E0 = igraph::as_edgelist(graph0, names =F)
   rownames(E0) = 1:m
   A0 = as_adj(graph0, sparse = F, names = F) # sparse = F, lookup speed is faster in non-sparse form
-  g0 = graph_from_edgelist(E0, directed = F)
+  g0 = igraph::graph_from_edgelist(E0, directed = F)
   if(igraph::components(g0)$no > 1) stop("base graph must be connected")
-  adjlist0 = lapply(as_adj_list(g0), as.integer)
-  deg0 = degree(g0) 
+  #adjlist0 = lapply(igraph::as_adj_list(g0), as.integer)
+  deg0 = igraph::degree(g0) 
   V(g0)$vid = 1:n
   E(g0)$eid = 1:m
   

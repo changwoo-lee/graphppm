@@ -7,7 +7,7 @@ using namespace Rcpp;
 #include "graph.h"
 #include "rng.h"
 
-// [[Rcpp::export(name = ".runcppWilson")]]
+// [[Rcpp::export]]
 Rcpp::IntegerMatrix runcppWilson(int n,
                                  Rcpp::IntegerMatrix graph_edge_list,
                                  int rootvertex,

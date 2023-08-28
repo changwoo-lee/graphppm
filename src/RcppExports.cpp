@@ -10,6 +10,44 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// uppertri_pcm
+IntegerMatrix uppertri_pcm(IntegerMatrix zsamples, int n, int nsamples);
+RcppExport SEXP _graphppm_uppertri_pcm(SEXP zsamplesSEXP, SEXP nSEXP, SEXP nsamplesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerMatrix >::type zsamples(zsamplesSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type nsamples(nsamplesSEXP);
+    rcpp_result_gen = Rcpp::wrap(uppertri_pcm(zsamples, n, nsamples));
+    return rcpp_result_gen;
+END_RCPP
+}
+// update_uppertri_pcm
+void update_uppertri_pcm(IntegerMatrix uppertri_pcm, IntegerVector z, int n);
+RcppExport SEXP _graphppm_update_uppertri_pcm(SEXP uppertri_pcmSEXP, SEXP zSEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerMatrix >::type uppertri_pcm(uppertri_pcmSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type z(zSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    update_uppertri_pcm(uppertri_pcm, z, n);
+    return R_NilValue;
+END_RCPP
+}
+// update_uppertri_logpsm
+void update_uppertri_logpsm(NumericMatrix uppertri_logpsm, IntegerVector z, int n, double logweight);
+RcppExport SEXP _graphppm_update_uppertri_logpsm(SEXP uppertri_logpsmSEXP, SEXP zSEXP, SEXP nSEXP, SEXP logweightSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type uppertri_logpsm(uppertri_logpsmSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type z(zSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< double >::type logweight(logweightSEXP);
+    update_uppertri_logpsm(uppertri_logpsm, z, n, logweight);
+    return R_NilValue;
+END_RCPP
+}
 // runcppWilson
 Rcpp::IntegerMatrix runcppWilson(int n, Rcpp::IntegerMatrix graph_edge_list, int rootvertex, Rcpp::IntegerVector ordering, int maxwalk);
 RcppExport SEXP _graphppm_runcppWilson(SEXP nSEXP, SEXP graph_edge_listSEXP, SEXP rootvertexSEXP, SEXP orderingSEXP, SEXP maxwalkSEXP) {
@@ -25,9 +63,83 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// testVertexEdge
+void testVertexEdge();
+RcppExport SEXP _graphppm_testVertexEdge() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    testVertexEdge();
+    return R_NilValue;
+END_RCPP
+}
+// testGraph
+void testGraph();
+RcppExport SEXP _graphppm_testGraph() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    testGraph();
+    return R_NilValue;
+END_RCPP
+}
+// testSubgraph
+void testSubgraph();
+RcppExport SEXP _graphppm_testSubgraph() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    testSubgraph();
+    return R_NilValue;
+END_RCPP
+}
+// testMST
+void testMST();
+RcppExport SEXP _graphppm_testMST() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    testMST();
+    return R_NilValue;
+END_RCPP
+}
+// testMSF
+void testMSF();
+RcppExport SEXP _graphppm_testMSF() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    testMSF();
+    return R_NilValue;
+END_RCPP
+}
+// testRST
+void testRST();
+RcppExport SEXP _graphppm_testRST() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    testRST();
+    return R_NilValue;
+END_RCPP
+}
+// benchmarkComponent
+void benchmarkComponent(IntegerMatrix edge_list);
+RcppExport SEXP _graphppm_benchmarkComponent(SEXP edge_listSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerMatrix >::type edge_list(edge_listSEXP);
+    benchmarkComponent(edge_list);
+    return R_NilValue;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_graphppm_uppertri_pcm", (DL_FUNC) &_graphppm_uppertri_pcm, 3},
+    {"_graphppm_update_uppertri_pcm", (DL_FUNC) &_graphppm_update_uppertri_pcm, 3},
+    {"_graphppm_update_uppertri_logpsm", (DL_FUNC) &_graphppm_update_uppertri_logpsm, 4},
     {"_graphppm_runcppWilson", (DL_FUNC) &_graphppm_runcppWilson, 5},
+    {"_graphppm_testVertexEdge", (DL_FUNC) &_graphppm_testVertexEdge, 0},
+    {"_graphppm_testGraph", (DL_FUNC) &_graphppm_testGraph, 0},
+    {"_graphppm_testSubgraph", (DL_FUNC) &_graphppm_testSubgraph, 0},
+    {"_graphppm_testMST", (DL_FUNC) &_graphppm_testMST, 0},
+    {"_graphppm_testMSF", (DL_FUNC) &_graphppm_testMSF, 0},
+    {"_graphppm_testRST", (DL_FUNC) &_graphppm_testRST, 0},
+    {"_graphppm_benchmarkComponent", (DL_FUNC) &_graphppm_benchmarkComponent, 1},
     {NULL, NULL, 0}
 };
 

@@ -35,6 +35,7 @@ is.crossing <- function(E0, z) {
 #' @param return.igraph *logical*, return igraph, otherwise edgelist. Note: igraph output has eid from the original graph 
 #'
 #' @return *edge list (with 2 columns) or igraph object*, quotient graph modulo a partition. Edge list output contains rownames as an edge id.
+#' @import igraph
 #' @export
 #'
 #' @examples
@@ -48,9 +49,9 @@ make_quotient_graph <- function(g0, z, return.igraph = F){
   # special case
   if(sum(iscrossing)==0){
     if(!return.igraph){
-      return(as_edgelist(make_empty_graph(1)))
+      return(igraph::as_edgelist(igraph::make_empty_graph(1)))
     }else{
-      return(make_empty_graph(1)) # one-block
+      return(igraph::make_empty_graph(1)) # one-block
     }
   }
   edgelist_quotient = cbind(z[E0[iscrossing,1]],z[E0[iscrossing,2]])
@@ -58,7 +59,7 @@ make_quotient_graph <- function(g0, z, return.igraph = F){
   if(!return.igraph){
     return(edgelist_quotient)
   }else{
-    qgraph = graph_from_edgelist(edgelist_quotient, directed = F)
+    qgraph = igraph::graph_from_edgelist(edgelist_quotient, directed = F)
     E(qgraph)$eid = which(iscrossing)
     return(qgraph)
   }

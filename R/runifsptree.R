@@ -7,7 +7,7 @@
 #' @param ordering *vector&lt;int&gt; (n)*, (optional) Ordering of nodes. Recommended as a breadth-first search ordering at the root. 
 #'
 #' @return *matrix&lt;int&gt; (n-1,2)*, Edge list of the sampled tree.
-#' @import Rcpp 
+#' @import Rcpp igraph
 #' @export
 #' @useDynLib graphppm
 #' 
@@ -40,7 +40,7 @@ runifsptree <- function(g0, root = NULL, ordering = NULL, maxiter = NULL){
 #' @param return.igraph *logical*, return igraph, otherwise edgelist with THREE columns where last column corresponds to crossing status
 #'
 #' @return *igraph or matrix&lt;int&gt; (n-1,3)*, 
-#' @import Rcpp 
+#' @import Rcpp igraph 
 #' @export
 #' @useDynLib graphppm
 #' 

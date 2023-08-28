@@ -6,6 +6,7 @@
 #' @param log *logical*, If TRUE (default), returns log value. 
 #'
 #' @return *double*, The (log of) number of spanning trees 
+#' @import igraph Matrix
 #' @export
 #'
 #' @examples
@@ -47,6 +48,7 @@ nsptrees <- function(A, log = T){
 #' @param log *logical*, If TRUE (default), returns log value. 
 #' @param sparse *logical*, If TRUE (default), uses sparse matrix calculation. 
 #'
+#' @import igraph Matrix
 #' @export
 #' @describeIn nsptrees Input is replaced with an igraph object g.
 #' 

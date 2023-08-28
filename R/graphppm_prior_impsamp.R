@@ -10,6 +10,7 @@
 #' @param ... 
 #'
 #' @return
+#' @import igraph matrixStats
 #' @export
 #'
 #' @examples

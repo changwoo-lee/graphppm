@@ -22,6 +22,7 @@ graphppm_prior <- function(graph0, logcohesion, cohesion_param = NULL,
   # input check for graph0
   if(!is.igraph(graph0)) stop("graph must be an igraph object")
   n = vcount(graph0)
+  m = ecount(g0)
   E0 = as_edgelist(graph0, names =F)
   rownames(E0) = 1:m
   A0 = as_adj(graph0, sparse = F, names = F) # sparse = F, lookup speed is faster in non-sparse form

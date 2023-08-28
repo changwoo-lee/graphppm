@@ -13,4 +13,9 @@ RoxygenNote: 7.2.2
 LinkingTo: 
     Rcpp
 Imports: 
-    Rcpp
+    doParallel,
+    igraph,
+    Matrix,
+    matrixStats,
+    Rcpp,
+    salso

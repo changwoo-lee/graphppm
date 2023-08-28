@@ -36,42 +36,32 @@ This is a basic example with Zachary's karate club dataset.
 
 ```{r example, eval  =F}
 library(graphppm)
-library(igraph)
 graph0 = make_graph("Zachary")
 
 # prior analysis with spanning tree based cohesion function 
-# see R/logcohesions.R for examples
-logcohesion_vetau <- function(A, deg = NULL, cohesion_param, minus_logtau = T){
-  alpha = cohesion_param$alpha
-  psi = cohesion_param$psi
-  
-  nj = ncol(A)
-  if(minus_logtau && (psi == 1)){  # no need to calculate tau(G_j)
-    out = log(alpha) -0.5*log(nj) + log(sum(A)/2)
-    attr(out,"logc0") = NA
-  }else{ # need to calculate tau(G_j)
-    logtau = graphppm::nsptrees(A, log = T) 
-    logc0 = -0.5*log(nj) + log(sum(A)/2) + logtau
-    if(minus_logtau){
-      out = log(alpha) + psi*logc0 - logtau
-    }else{
-      out = log(alpha) + psi*logc0
-    }
-    attr(out,"logc0") = logc0
-  }
-  return(out)
-}
-
+library(graphppm)
+graph0 = make_graph("Zachary")
+# cohesion function examples
+source("https://raw.github.com/changwoo-lee/graphppm/main/R/logcohesions.R")
 
 cohesion_param = list(alpha = 1, psi = 1)
-
+# using importance sampler
 fit = graphppm_prior_impsamp(graph0, 
                              logcohesion = logcohesion_vetau, 
                              cohesion_param = cohesion_param, 
-                             nsave = 5000)
+                             nsave = 10000)
+# using split-merge MCMC
+fit2 = graphppm_prior(graph0, 
+                             logcohesion = logcohesion_vetau, 
+                             cohesion_param = cohesion_param, 
+                             nsave = 10000, nburn = 1000, nthin = 1)
+par(mfrow = c(1,2))
+plot(fit$kpmf[1:5])
+plot(fit2$kpmf[1:5])
 
-
-
+library(fields)
+image.plot(fit$simmatrix)
+image.plot(fit2$simmatrix)
 ```
 
 

@@ -5,7 +5,7 @@
 # default resolution_parameter = 1
 # REQUIRE argument m, the number of edges in the original graph
 #
-logcohesion_modularity <- function(A, deg, minus_logtau = T, cohesion_param){
+logcohesion_modularity <- function(A, deg, cohesion_param, minus_logtau = T){
   alpha = cohesion_param$alpha
   psi = cohesion_param$psi
   resolution_parameter = cohesion_param$resolution_parameter
@@ -28,7 +28,7 @@ logcohesion_modularity <- function(A, deg, minus_logtau = T, cohesion_param){
 # default resolution = quantile(degree(g))[2] / (degree(g) - 1) ? (See ?igraph::cluster_leiden)
 # require argument m, the number of edges in the original graph
 
-logcohesion_CPM <- function(A, deg, minus_logtau = T, cohesion_param){
+logcohesion_CPM <- function(A, deg, cohesion_param, minus_logtau = T){
   
   alpha = cohesion_param$alpha
   psi = cohesion_param$psi
@@ -53,7 +53,7 @@ logcohesion_CPM <- function(A, deg, minus_logtau = T, cohesion_param){
 # 
 # if div_by_nsptree = T, return log(c) - log(tau)
 
-logcohesion_tau <- function(A, deg = NULL, minus_logtau = T, cohesion_param){
+logcohesion_tau <- function(A, deg = NULL, cohesion_param, minus_logtau = T){
   alpha = cohesion_param$alpha
   psi = cohesion_param$psi
   
@@ -79,7 +79,7 @@ logcohesion_tau <- function(A, deg = NULL, minus_logtau = T, cohesion_param){
 # 
 # if div_by_nsptree = T, return log(c) - log(tau)
 
-logcohesion_etau <- function(A, deg = NULL, minus_logtau = T, cohesion_param){
+logcohesion_etau <- function(A, deg = NULL, cohesion_param, minus_logtau = T){
   alpha = cohesion_param$alpha
   psi = cohesion_param$psi
 
@@ -104,7 +104,7 @@ logcohesion_etau <- function(A, deg = NULL, minus_logtau = T, cohesion_param){
 # 
 # if div_by_nsptree = T, return log(c) - log(tau)
 
-logcohesion_vetau <- function(A, deg = NULL, minus_logtau = T, cohesion_param){
+logcohesion_vetau <- function(A, deg = NULL, cohesion_param, minus_logtau = T){
   alpha = cohesion_param$alpha
   psi = cohesion_param$psi
   
@@ -130,7 +130,7 @@ logcohesion_vetau <- function(A, deg = NULL, minus_logtau = T, cohesion_param){
 ### misc ###############
 # log(c) where c(G_j) = alpha * Gamma(n_j)^psi
 
-logcohesion_gamma <- function(A, deg = NULL, minus_logtau = T, cohesion_param){
+logcohesion_gamma <- function(A, deg = NULL, cohesion_param, minus_logtau = T){
   alpha = cohesion_param$alpha
   psi = cohesion_param$psi
   

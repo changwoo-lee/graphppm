@@ -138,6 +138,7 @@ graphppm_prior_impsamp <- function(graph0, logcohesion, cohesion_param = NULL, n
   out$simmatrix_effsize = effsize
   out$save_logweight = save_logweight
   out$save_k = save_k
+  out$cohesion_param = cohesion_param
   return(out)
 }
 

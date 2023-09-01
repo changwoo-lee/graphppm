@@ -82,9 +82,12 @@ logcohesion_tau <- function(A, deg = NULL, cohesion_param, minus_logtau = T){
 logcohesion_etau <- function(A, deg = NULL, cohesion_param, minus_logtau = T){
   alpha = cohesion_param$alpha
   psi = cohesion_param$psi
-
+  
+  nj = ncol(A)
+  if(nj==1){ ej = 1 }else{  ej = sum(A)/2 }
+  
   if(minus_logtau && (psi == 1)){  # no need to calculate tau(G_j)
-    out = log(alpha) + log(sum(A)/2)
+    out = log(alpha) + log(ej)
     attr(out,"logc0") = NA
   }else{ # need to calculate tau(G_j)
     logtau = graphppm::nsptrees(A, log = T) 
@@ -109,12 +112,14 @@ logcohesion_vetau <- function(A, deg = NULL, cohesion_param, minus_logtau = T){
   psi = cohesion_param$psi
   
   nj = ncol(A)
+  if(nj==1){ ej = 1 }else{  ej = sum(A)/2 }
+  
   if(minus_logtau && (psi == 1)){  # no need to calculate tau(G_j)
-    out = log(alpha) -0.5*log(nj) + log(sum(A)/2)
+    out = log(alpha) -0.5*log(nj) + log(ej)
     attr(out,"logc0") = NA
   }else{ # need to calculate tau(G_j)
     logtau = graphppm::nsptrees(A, log = T) 
-    logc0 = -0.5*log(nj) + log(sum(A)/2) + logtau
+    logc0 = -0.5*log(nj) + log(ej) + logtau
     if(minus_logtau){
       out = log(alpha) + psi*logc0 - logtau
     }else{

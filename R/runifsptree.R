@@ -5,6 +5,7 @@
 #' @param g0 *igraph object*, Graph.
 #' @param root *int*, (optional) Root node. Recommended as a node with max degree
 #' @param ordering *vector&lt;int&gt; (n)*, (optional) Ordering of nodes. Recommended as a breadth-first search ordering at the root. 
+#' @param return.igraph *logical*, return igraph, otherwise edgelist
 #'
 #' @return *matrix&lt;int&gt; (n-1,2)*, Edge list of the sampled tree.
 #' @import Rcpp igraph
@@ -18,7 +19,7 @@
 #' ust = runifsptree(g, root, ordering)
 #' 
 #' 
-runifsptree <- function(g0, root = NULL, ordering = NULL, maxiter = NULL){
+runifsptree <- function(g0, root = NULL, ordering = NULL, maxiter = NULL, return.igraph = F){
   E0 = igraph::as_edgelist(g0, names = F)
   n = igraph::vcount(g0)
   if(is.null(root)) root = 1L
@@ -28,6 +29,7 @@ runifsptree <- function(g0, root = NULL, ordering = NULL, maxiter = NULL){
   if(is.null(maxiter)) maxiter = max(100, 10*n^3)
   
   edge_list = graphppm:::runcppWilson(n, E0, root, ordering, maxiter)
+  if(return_igraph) return(igraph::graph_from_edgelist(edge_list, directed = F))
   return(edge_list)
 }
 
@@ -49,7 +51,7 @@ runifsptree <- function(g0, root = NULL, ordering = NULL, maxiter = NULL){
 #' z = c(1,1,1,1,1,1,1,1,2,2,1,1,1,1,2,2,1,1,2,1,2,1,2,2,2,2,2,2,2,2,2,2,2,2)
 #' runifsptree_given_z(g0, z)
 #' 
-runifsptree_given_z <- function(g0, z, return.igraph = T){
+runifsptree_given_z <- function(g0, z, return.igraph = F){
   E0 = igraph::as_edgelist(g0, names = F)
   n = igraph::vcount(g0)
   V(g0)$vid = 1:n

@@ -19,7 +19,7 @@
 #' 
 #' 
 runifsptree <- function(g0, root = NULL, ordering = NULL, maxiter = NULL){
-  E0 = igraph::as_edgelist(g0)
+  E0 = igraph::as_edgelist(g0, names = F)
   n = igraph::vcount(g0)
   if(is.null(root)) root = 1L
   mode(root) = "integer"
@@ -50,7 +50,7 @@ runifsptree <- function(g0, root = NULL, ordering = NULL, maxiter = NULL){
 #' runifsptree_given_z(g0, z)
 #' 
 runifsptree_given_z <- function(g0, z, return.igraph = T){
-  E0 = igraph::as_edgelist(g0)
+  E0 = igraph::as_edgelist(g0, names = F)
   n = igraph::vcount(g0)
   V(g0)$vid = 1:n
   E(g0)$eid = 1:ecount(g0)
@@ -69,11 +69,11 @@ runifsptree_given_z <- function(g0, z, return.igraph = T){
     if(!is.connected(gj)) stop("induced subgraph is not connected, invaild z")
     nj = vcount(gj)
     if(nj == 1){
-      edgelist[[j]] = matrix(0, 0, ncol = 2)
+      edgelist[[j]] = matrix(0, 0, ncol = 3)# third column: is.crossing status 
       next;
     }
     vid = V(gj)$vid
-    edges = graphppm:::runcppWilson(nj, as_edgelist(gj), 1, 1:nj, max(100,nj^3))
+    edges = graphppm:::runcppWilson(nj, as_edgelist(gj, names = F), 1, 1:nj, max(100,nj^3))
     edges[,1] = vid[edges[,1]]
     edges[,2] = vid[edges[,2]]
     edgelist[[j]] = cbind(edges, 0) # third column: is.crossing status 

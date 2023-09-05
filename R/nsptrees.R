@@ -38,15 +38,15 @@ nsptrees <- function(A, log = T){
       out = as.numeric(determinant(L[-1,-1, drop = F], logarithm = T)$modulus)
     }
   } 
-  if(!log) out = exp(out)
+  if(!log) out = as.integer(exp(out))
   out
 }
 
 #' The number of spanning trees of a graph
 #'
 #' @param g *igraph object*, Graph
-#' @param log *logical*, If TRUE (default), returns log value. 
-#' @param sparse *logical*, If TRUE (default), uses sparse matrix calculation. 
+#' @param log *logical*, If TRUE (default T), returns log value. 
+#' @param sparse *logical*, If TRUE (default F), uses sparse matrix calculation. 
 #'
 #' @import igraph Matrix
 #' @export
@@ -65,7 +65,7 @@ nsptrees_igraph <- function(g, log = T, sparse = F){
       out = as.numeric(determinant(L[-1,-1, drop = F], logarithm = T)$modulus)
     }
   } 
-  if(!log) out = exp(out)
+  if(!log) out = as.integer(exp(out))
   out
 }
 

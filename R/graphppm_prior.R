@@ -81,6 +81,7 @@ graphppm_prior <- function(graph0, logcohesion, cohesion_param = NULL,
     
     #cat(iter, move, log_like,'\n', sep = ' ')
     if(move == 1) { 
+      
       ### Step 1(a), split -------
       
       # split cluster by choosing a within-cluster edge
@@ -250,6 +251,7 @@ graphppm_prior <- function(graph0, logcohesion, cohesion_param = NULL,
       ### Step 1(d), hyper ####
       # update UST
       move_acc[4] = move_acc[4] + 1
+      #browser()
       sptree = runifsptree_given_z(g0, z, return.igraph = F)
     }
     

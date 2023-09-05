@@ -29,7 +29,7 @@ runifsptree <- function(g0, root = NULL, ordering = NULL, maxiter = NULL, return
   if(is.null(maxiter)) maxiter = max(100, 10*n^3)
   
   edge_list = graphppm:::runcppWilson(n, E0, root, ordering, maxiter)
-  if(return_igraph) return(igraph::graph_from_edgelist(edge_list, directed = F))
+  if(return.igraph) return(igraph::graph_from_edgelist(edge_list, directed = F))
   return(edge_list)
 }
 

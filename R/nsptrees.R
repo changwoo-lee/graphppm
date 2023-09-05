@@ -38,7 +38,7 @@ nsptrees <- function(A, log = T){
       out = as.numeric(determinant(L[-1,-1, drop = F], logarithm = T)$modulus)
     }
   } 
-  if(!log) out = as.integer(exp(out))
+  if(!log) out = round(exp(out),0)
   out
 }
 
@@ -65,7 +65,7 @@ nsptrees_igraph <- function(g, log = T, sparse = F){
       out = as.numeric(determinant(L[-1,-1, drop = F], logarithm = T)$modulus)
     }
   } 
-  if(!log) out = as.integer(exp(out))
+  if(!log) out =round(exp(out),0)
   out
 }
 

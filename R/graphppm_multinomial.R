@@ -1,18 +1,15 @@
-# alpha: length d vector, symmetric dirichlet parameter 
-# nclass: length d vector of integer, number of classes
-# dirichlet-multinomial distribution; 
-# see https://en.wikipedia.org/wiki/Dirichlet-multinomial_distribution#For_a_set_of_individual_outcomes
-logmarginal_categorical_d <- function(data, nclass, a0 = rep(1, ncol(data))){
-  n = nrow(data)
-  d = ncol(data)
-  summand = 0
-  for(dd in 1:d){
-    summand = summand + lgamma(nclass[dd]*a0[dd]) - lgamma(n + nclass[dd]*a0[dd]) +
-      sum(lgamma(tabulate(data[,dd], nbins = nclass[dd])+a0[dd])) - nclass[dd]*lgamma(a0[dd])
-  }
-  summand
-}
 
+# see Stephen Tu, eq(2)
+logmarginal_multinomial <- function(data, a0 = 1){
+  n = nrow(data)
+  nclass = ncol(data)
+  ntrial = rowSums(data)
+  #for(i in 1:n){
+  #  summand = summand + lgamma(ntrial[i] + 1) - sum(lgamma(data[i,]+1))
+  #}
+  summand = sum(lgamma(ntrial+1)) - sum(lgamma(data+1))
+  summand + lgamma(nclass*a0)  - nclass*lgamma(a0) + sum(lgamma(colSums(data)+a0)) - lgamma(sum(ntrial) + nclass*a0)
+}
 #' GraphPPM categorical response analysis using MCMC
 #' 
 #' Node attribute is modeled with independent categorical distribution, with symmetric Dirichlet prior. 
@@ -35,9 +32,9 @@ logmarginal_categorical_d <- function(data, nclass, a0 = rep(1, ncol(data))){
 #' @export
 #'
 #' @examples
-graphppm_categorical <- function(graph0,  Y, 
+graphppm_multinomial <- function(graph0,  Y, 
                                  logcohesion, cohesion_param = NULL,
-                                 nclass = NULL, a0 = rep(1,ncol(Y)),
+                                 nclass = ncol(Y), a0 = 1,
                                  nsave = 1000, nburn = 1000, nthin = 1,
                                  z_init = NULL){
   niter = nburn + nthin*nsave 
@@ -58,12 +55,7 @@ graphppm_categorical <- function(graph0,  Y,
   
   # input check for y
   Y = as.matrix(Y)
-  d = ncol(Y)
   if(nrow(Y)!=n) stop("Y must be a matrix with rows same as the number of vertices")
-  if(is.null(nclass)){
-    warning("nclass not provided, using max category of each dimension as the number of classes")
-    nclass = apply(Y, 2, max)
-  }
   
   # initialize patition, default one-block cluster
   if(is.null(z_init)) z_init = rep(1, n)
@@ -133,9 +125,9 @@ graphppm_categorical <- function(graph0,  Y,
         logcohesion(A0[idx_j, idx_j, drop = F], deg0[idx_j], cohesion_param) + # can be precalculated
         nsptrees_igraph(make_quotient_graph(g0, z, return.igraph = T), log = T) -  # can be precalculated
         nsptrees_igraph(make_quotient_graph(g0, z_star, return.igraph = T), log = T) +
-        logmarginal_categorical_d(Y[idxstar1,, drop = F], nclass, a0) +
-        logmarginal_categorical_d(Y[idxstar2,, drop = F], nclass, a0) - 
-        logmarginal_categorical_d(Y[idx_j,, drop = F], nclass, a0)
+        logmarginal_multinomial(Y[idxstar1,, drop = F], a0) +
+        logmarginal_multinomial(Y[idxstar2,, drop = F], a0) - 
+        logmarginal_multinomial(Y[idx_j,, drop = F], a0)
       
       if(k == n-1) {
         pb_new = 0.9
@@ -181,9 +173,9 @@ graphppm_categorical <- function(graph0,  Y,
         logcohesion(A0[idx_j2, idx_j2, drop = F], deg0[idx_j2], cohesion_param) + 
         nsptrees_igraph(make_quotient_graph(g0, z, return.igraph = T), log = T) -  
         nsptrees_igraph(make_quotient_graph(g0, z_star, return.igraph = T), log = T) + 
-        logmarginal_categorical_d(Y[idx_jstar,, drop = F], nclass, a0) - 
-        logmarginal_categorical_d(Y[idx_j1,, drop = F], nclass, a0) - 
-        logmarginal_categorical_d(Y[idx_j2,, drop = F], nclass, a0)
+        logmarginal_multinomial(Y[idx_jstar,, drop = F], a0) - 
+        logmarginal_multinomial(Y[idx_j1,, drop = F], a0) - 
+        logmarginal_multinomial(Y[idx_j2,, drop = F], a0)
       
       # # compute log-proposal ratio
       if(k == 2) {pa_new = 0.9
@@ -232,9 +224,9 @@ graphppm_categorical <- function(graph0,  Y,
         logcohesion(A0[idx_j2, idx_j2, drop = F], deg0[idx_j2], cohesion_param) + 
         nsptrees_igraph(make_quotient_graph(g0, z, return.igraph = T), log = T) -  
         nsptrees_igraph(make_quotient_graph(g0, z_star, return.igraph = T), log = T) +
-        logmarginal_categorical_d(Y[idx_jstar,, drop = F], nclass, a0) - 
-        logmarginal_categorical_d(Y[idx_j1,, drop = F], nclass, a0) - 
-        logmarginal_categorical_d(Y[idx_j2,, drop = F], nclass, a0)
+        logmarginal_multinomial(Y[idx_jstar,, drop = F], a0) - 
+        logmarginal_multinomial(Y[idx_j1,, drop = F], a0) - 
+        logmarginal_multinomial(Y[idx_j2,, drop = F], a0)
       
       # split cluster by choosing a within-cluster edge
       if(sum(sptree_star[,"iscrossing"]==0) > 1){
@@ -263,9 +255,9 @@ graphppm_categorical <- function(graph0,  Y,
         logcohesion(A0[idx_j, idx_j, drop = F], deg0[idx_j], cohesion_param) + # can be precalculated
         nsptrees_igraph(make_quotient_graph(g0, z_star, return.igraph = T), log = T) -  # can be precalculated
         nsptrees_igraph(make_quotient_graph(g0, z_starstar, return.igraph = T), log = T) +
-        logmarginal_categorical_d(Y[idxstar1,, drop = F], nclass, a0) +
-        logmarginal_categorical_d(Y[idxstar2,, drop = F], nclass, a0) - 
-        logmarginal_categorical_d(Y[idx_j,, drop = F], nclass, a0)
+        logmarginal_multinomial(Y[idxstar1,, drop = F], a0) +
+        logmarginal_multinomial(Y[idxstar2,, drop = F], a0) - 
+        logmarginal_multinomial(Y[idx_j,, drop = F], a0)
       
       logprop_ratio = 0
       #acceptance probability
@@ -297,13 +289,12 @@ graphppm_categorical <- function(graph0,  Y,
         idx = which(z==j)
         nj = length(idx)
         temp = numeric(nj)
-        for(dd in 1:d){
-          # composition sampling theta (probability vector for categories)
-          an = rep(a0, nclass[dd])+ tabulate(Y[idx,dd], nbins = nclass[dd]) # replace alpha prior in place of 1 if needed 
-          theta_post = as.numeric(LaplacesDemon::rdirichlet(1, an)) # nclass[dd] dimensional prob. vector
-          temp = temp + log(theta_post[Y[idx,dd]])
-        }
-        save_loglik[counter,idx] = temp
+        
+        # composition sampling theta (probability vector for categories)
+        an = rep(a0, nclass) + colSums(Y[idx,,drop = F]) # replace alpha prior in place of 1 if needed 
+        theta_post = as.numeric(LaplacesDemon::rdirichlet(1, an)) # nclass[dd] dimensional prob. vector
+        #browser()
+        save_loglik[counter,idx] = apply(Y[idx,, drop = F], 1, stats::dmultinom, prob = theta_post, log = T)
       }
       
     }

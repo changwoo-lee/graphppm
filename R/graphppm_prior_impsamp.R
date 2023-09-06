@@ -7,7 +7,6 @@
 #' @param kvals range of k
 #' @param kprobs unnormalized probability of q(k)
 #' @param nCores default 1, set 2 or more lead to parallel run
-#' @param ... 
 #'
 #' @return
 #' @import igraph matrixStats doParallel
@@ -15,7 +14,7 @@
 #'
 #' @examples
 graphppm_prior_impsamp <- function(graph0, logcohesion, cohesion_param = NULL, nsave = 2000,
-                           kvals = NULL, kprobs = NULL, nCores = 1, ...){
+                           kvals = NULL, kprobs = NULL, nCores = 1){
   
   if(is.null(cohesion_param)){
     cohesion_param = list(alpha = 1, psi = 1)

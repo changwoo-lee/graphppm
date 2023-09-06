@@ -10,6 +10,7 @@
 calibrate_alpha_k <- function(fit, alpha){
   if(any(alpha <=0)) stop("alpha must be positive")
   logweight = fit$save_logweight
+  if(is.null(logweight)) stop("importance weights not provided")
   save_k = fit$save_k
   nsave = length(fit$save_k)
   nalpha = length(alpha)

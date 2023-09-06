@@ -1,15 +1,16 @@
 # vectorized version of logmarginal_gaussian_1 for each dimension
 # i.e. assuming independent variance x_1, ... x_n ~ iid N_d(mu, lambda^(-1)*I_d) 
-logmarginal_gaussian_d_indep <- function(data, mu0 = rep(0, ncol(data)), kappa = 1, alpha0 = 1, beta0 = 1){
+# see (95) murphy book
+logmarginal_gaussian_d_indep <- function(data, mu0 = rep(0, ncol(data)), kappa = 1, a0 = 1, b0 = 1){
   data = as.matrix(data)
   n = nrow(data)
   d = ncol(data)
   xbar = colMeans(data) # dim d
   kappan = kappa0 + n
-  alphan = alpha0 + n/2
+  an = a0 + n/2
   #mun = (kappa0*mu0 + n*xbar)/kappan # dim d
-  betan = beta0 + colSums((data-rep(xbar, each = n))^2)/2 + kappa0*n*(xbar - mu0)^2/(2*kappan) # dim d
-  sum(lgamma(alphan) - lgamma(alpha0) + alpha0*log(beta0)- alphan*log(betan) + log(kappa0/kappan)/2 - n/2*log(2*pi)) # sum of dim d
+  bn = b0 + colSums((data-rep(xbar, each = n))^2)/2 + kappa0*n*(xbar - mu0)^2/(2*kappan) # dim d
+  sum(lgamma(an) - lgamma(a0) + a0*log(b0)- an*log(bn) + log(kappa0/kappan)/2 - n/2*log(2*pi)) # sum of dim d
 }
 
 
@@ -32,7 +33,7 @@ logmarginal_gaussian_d_indep <- function(data, mu0 = rep(0, ncol(data)), kappa =
 #' @examples
 graphppm_indepnormal <- function(graph0,  Y, 
                                  logcohesion, cohesion_param = NULL,
-                                 mu0 = rep(0, ncol(Y)), kappa = 1, alpha0 = 1, beta0 = 1,
+                                 mu0 = rep(0, ncol(Y)), kappa = 1, a0 = 1, b0 = 1,
                            nsave = 1000, nburn = 1000, nthin = 1,
                            z_init = NULL){
   niter = nburn + nthin*nsave 
@@ -52,6 +53,8 @@ graphppm_indepnormal <- function(graph0,  Y,
   E(g0)$eid = 1:m
   
   # input check for y
+  Y = as.matrix(Y)
+  d = ncol(Y)
   if(nrow(Y)!=n) stop("Y must be a matrix with rows same as the number of vertices")
   
   # initialize patition, default one-block cluster
@@ -69,11 +72,12 @@ graphppm_indepnormal <- function(graph0,  Y,
   sptree = runifsptree_given_z(g0, z, return.igraph = F)
   
   # save object
-  
   counter = 0
   move_acc = numeric(4)
   move_cnt = numeric(4)
   save_z = matrix(0L, nrow = nsave, ncol = n)
+  save_loglik = matrix(0, nrow = nsave, ncol =  n) # each row corresponds to p(y_i | theta_z_i), i = 1,...,n
+  
   pd = 0.1
   
   
@@ -121,9 +125,9 @@ graphppm_indepnormal <- function(graph0,  Y,
         logcohesion(A0[idx_j, idx_j, drop = F], deg0[idx_j], cohesion_param) + # can be precalculated
         nsptrees_igraph(make_quotient_graph(g0, z, return.igraph = T), log = T) -  # can be precalculated
         nsptrees_igraph(make_quotient_graph(g0, z_star, return.igraph = T), log = T) +
-        logmarginal_gaussian_d_indep(Y[idxstar1,], mu0, kappa, alpha0, beta0) +
-        logmarginal_gaussian_d_indep(Y[idxstar2,], mu0, kappa, alpha0, beta0) - 
-        logmarginal_gaussian_d_indep(Y[idx_j,], mu0, kappa, alpha0, beta0)
+        logmarginal_gaussian_d_indep(Y[idxstar1,, drop = F], mu0, kappa, a0, b0) +
+        logmarginal_gaussian_d_indep(Y[idxstar2,, drop = F], mu0, kappa, a0, b0) - 
+        logmarginal_gaussian_d_indep(Y[idx_j,, drop = F], mu0, kappa, a0, b0)
       
       if(k == n-1) {
         pb_new = 0.9
@@ -169,9 +173,9 @@ graphppm_indepnormal <- function(graph0,  Y,
         logcohesion(A0[idx_j2, idx_j2, drop = F], deg0[idx_j2], cohesion_param) + 
         nsptrees_igraph(make_quotient_graph(g0, z, return.igraph = T), log = T) -  
         nsptrees_igraph(make_quotient_graph(g0, z_star, return.igraph = T), log = T) + 
-        logmarginal_gaussian_d_indep(Y[idx_jstar,], mu0, kappa, alpha0, beta0) - 
-        logmarginal_gaussian_d_indep(Y[idx_j1,], mu0, kappa, alpha0, beta0) - 
-        logmarginal_gaussian_d_indep(Y[idx_j2,], mu0, kappa, alpha0, beta0)
+        logmarginal_gaussian_d_indep(Y[idx_jstar,, drop = F], mu0, kappa, a0, b0) - 
+        logmarginal_gaussian_d_indep(Y[idx_j1,, drop = F], mu0, kappa, a0, b0) - 
+        logmarginal_gaussian_d_indep(Y[idx_j2,, drop = F], mu0, kappa, a0, b0)
       
       # # compute log-proposal ratio
       if(k == 2) {pa_new = 0.9
@@ -220,9 +224,9 @@ graphppm_indepnormal <- function(graph0,  Y,
         logcohesion(A0[idx_j2, idx_j2, drop = F], deg0[idx_j2], cohesion_param) + 
         nsptrees_igraph(make_quotient_graph(g0, z, return.igraph = T), log = T) -  
         nsptrees_igraph(make_quotient_graph(g0, z_star, return.igraph = T), log = T) +
-        logmarginal_gaussian_d_indep(Y[idx_jstar,], mu0, kappa, alpha0, beta0) - 
-        logmarginal_gaussian_d_indep(Y[idx_j1,], mu0, kappa, alpha0, beta0) - 
-        logmarginal_gaussian_d_indep(Y[idx_j2,], mu0, kappa, alpha0, beta0)
+        logmarginal_gaussian_d_indep(Y[idx_jstar,, drop = F], mu0, kappa, a0, b0) - 
+        logmarginal_gaussian_d_indep(Y[idx_j1,, drop = F], mu0, kappa, a0, b0) - 
+        logmarginal_gaussian_d_indep(Y[idx_j2,, drop = F], mu0, kappa, a0, b0)
       
       # split cluster by choosing a within-cluster edge
       if(sum(sptree_star[,"iscrossing"]==0) > 1){
@@ -251,9 +255,9 @@ graphppm_indepnormal <- function(graph0,  Y,
         logcohesion(A0[idx_j, idx_j, drop = F], deg0[idx_j], cohesion_param) + # can be precalculated
         nsptrees_igraph(make_quotient_graph(g0, z_star, return.igraph = T), log = T) -  # can be precalculated
         nsptrees_igraph(make_quotient_graph(g0, z_starstar, return.igraph = T), log = T) +
-        logmarginal_gaussian_d_indep(Y[idxstar1,], mu0, kappa, alpha0, beta0) +
-        logmarginal_gaussian_d_indep(Y[idxstar2,], mu0, kappa, alpha0, beta0) - 
-        logmarginal_gaussian_d_indep(Y[idx_j,], mu0, kappa, alpha0, beta0)
+        logmarginal_gaussian_d_indep(Y[idxstar1,, drop = F], mu0, kappa, a0, b0) +
+        logmarginal_gaussian_d_indep(Y[idxstar2,, drop = F], mu0, kappa, a0, b0) - 
+        logmarginal_gaussian_d_indep(Y[idx_j,, drop = F], mu0, kappa, a0, b0)
       
       logprop_ratio = 0
       #acceptance probability
@@ -280,20 +284,41 @@ graphppm_indepnormal <- function(graph0,  Y,
     if(iter > nburn & (iter - nburn) %% nthin == 0) {
       counter = counter + 1
       save_z[counter,] <- z
+      # log likelihood calculation
+      for(j in 1:k){
+        idx = which(z==j)
+        nj = length(idx)
+        # composition sampler, draw mu and sig from its posterior
+        # murphy (85)
+        ybar = colMeans(Y[idx,,drop = F])
+        an = a0 + nj/2
+        kappan = kappa0 + nj/2
+        bn = b0 + 0.5*rowSums((t(Y[idx,,drop = F])- ybar)^2) + kappa0*nj*(ybar - mu0)^2/(2*kappa0 + nj)
+        mun = (kappa0*mu0 + nj*ybar)/(kappa0 + nj)
+        # composition sample
+        lambda = rgamma(d, shape = an, rate = bn) # length d precisions
+        mu = rnorm(d, mun, sd = 1/sqrt(kappan*lambda)) # length d
+        # save loglikelihood
+        temp = numeric(nj)
+        for(dd in 1:d) temp = temp + dnorm(Y[idx,dd], mu[d], sd= 1/sqrt(lambda[d]), log = T)
+        save_loglik[counter,idx] = temp
+      }
+      
     }
-    # if(verbose){
-    #   if(imcmc %% 1000 == 0){
-    #     cat("iter",imcmc,",",paste(z)," k:",k,"\n")
-    #     V(graph0)$color <- z
-    #     plot(graph0, layout = coords, main = paste("iteration",iter))
-    #     readline(prompt="Press [enter] to continue")
-    #   }
-    # }
     if(iter %% 1000 == 0) cat(paste("iteration",iter,"done\n"))
+  }
+  
+  dic = function(LL){# see examples in LaplacesDemon::WAIC
+    Dev <- -2*colSums(LL)
+    DIC <- list(dic=mean(Dev) + var(Dev)/2, Dbar=mean(Dev), pV=var(Dev)/2)
+    DIC
   }
   
   out = list()
   out$save_z = save_z
+  out$save_loglik = save_loglik
+  out$WAIC = LaplacesDemon::WAIC(t(save_loglik))
+  out$DIC = dic(t(save_loglik))
   out$kpmf = table(apply(save_z, 1, function(x) (length(unique(x)))))/nsave
   out$simmatrix = salso::psm(save_z)
   out$move_cnt = move_cnt

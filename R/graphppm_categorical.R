@@ -1,7 +1,23 @@
-#' GraphPPM prior analysis using MCMC
+# alpha: length d vector, symmetric dirichlet parameter 
+# nclass: length d vector of integer, number of classes
+# dirichlet-multinomial distribution; 
+# see https://en.wikipedia.org/wiki/Dirichlet-multinomial_distribution#For_a_set_of_individual_outcomes
+logmarginal_categorical_d <- function(data, nclass, a0 = rep(1, ncol(data))){
+  n = nrow(data)
+  d = ncol(data)
+  summand = 0
+  for(dd in 1:d){
+    summand = summand + lgamma(nclass[dd]*a0[dd]) - lgamma(n + nclass[dd]*a0[dd]) +
+      sum(lgamma(tabulate(data[,dd], nbins = nclass[dd])+a0[dd])) - nclass[dd]*lgamma(a0[dd])
+  }
+  summand
+}
+
+#' GraphPPM Gaussian response analysis using MCMC
 #' 
 #' @param graph0 igraph object, base graph
 #' @param logcohesion logcohesion function
+#' @param Y 
 #' @param cohesion_param cohesion function parameters
 #' @param nsave number of samples
 #' @param nburn 
@@ -13,9 +29,11 @@
 #' @export
 #'
 #' @examples
-graphppm_prior <- function(graph0, logcohesion, cohesion_param = NULL, 
-                           nsave = 1000, nburn = 1000, nthin = 1, 
-                           z_init = NULL){
+graphppm_categorical <- function(graph0,  Y, 
+                                 logcohesion, cohesion_param = NULL,
+                                 nclass = NULL, a0 = rep(1,ncol(Y)),
+                                 nsave = 1000, nburn = 1000, nthin = 1,
+                                 z_init = NULL){
   niter = nburn + nthin*nsave 
   
   # input check for graph0
@@ -31,6 +49,15 @@ graphppm_prior <- function(graph0, logcohesion, cohesion_param = NULL,
   deg0 = igraph::degree(g0) 
   V(g0)$vid = 1:n
   E(g0)$eid = 1:m
+  
+  # input check for y
+  Y = as.matrix(Y)
+  d = ncol(Y)
+  if(nrow(Y)!=n) stop("Y must be a matrix with rows same as the number of vertices")
+  if(is.null(nclass)){
+    warning("nclass not provided, using max category of each dimension as the number of classes")
+    nclass = apply(Y, 2, max)
+  }
   
   # initialize patition, default one-block cluster
   if(is.null(z_init)) z_init = rep(1, n)
@@ -51,8 +78,10 @@ graphppm_prior <- function(graph0, logcohesion, cohesion_param = NULL,
   move_acc = numeric(4)
   move_cnt = numeric(4)
   save_z = matrix(0L, nrow = nsave, ncol = n)
+  save_loglik = matrix(0, nrow = nsave, ncol =  n) # each row corresponds to p(y_i | theta_z_i), i = 1,...,n
+  
   pd = 0.1
-
+  
   
   # for loop
   for(iter in 1:niter){
@@ -94,10 +123,13 @@ graphppm_prior <- function(graph0, logcohesion, cohesion_param = NULL,
       idxstar2 = which(z_star==splitted_j1j2[2])
       
       loglik_ratio = logcohesion(A0[idxstar1,idxstar1, drop = F], deg0[idxstar1], cohesion_param) +
-                     logcohesion(A0[idxstar2,idxstar2, drop = F], deg0[idxstar2], cohesion_param) - 
-                     logcohesion(A0[idx_j, idx_j, drop = F], deg0[idx_j], cohesion_param) + # can be precalculated
-                     nsptrees_igraph(make_quotient_graph(g0, z, return.igraph = T), log = T) -  # can be precalculated
-                     nsptrees_igraph(make_quotient_graph(g0, z_star, return.igraph = T), log = T)
+        logcohesion(A0[idxstar2,idxstar2, drop = F], deg0[idxstar2], cohesion_param) - 
+        logcohesion(A0[idx_j, idx_j, drop = F], deg0[idx_j], cohesion_param) + # can be precalculated
+        nsptrees_igraph(make_quotient_graph(g0, z, return.igraph = T), log = T) -  # can be precalculated
+        nsptrees_igraph(make_quotient_graph(g0, z_star, return.igraph = T), log = T) +
+        logmarginal_categorical_d(Y[idxstar1,, drop = F], nclass, a0) +
+        logmarginal_categorical_d(Y[idxstar2,, drop = F], nclass, a0) - 
+        logmarginal_categorical_d(Y[idx_j,, drop = F], nclass, a0)
       
       if(k == n-1) {
         pb_new = 0.9
@@ -142,7 +174,10 @@ graphppm_prior <- function(graph0, logcohesion, cohesion_param = NULL,
         logcohesion(A0[idx_j1, idx_j1, drop = F], deg0[idx_j1], cohesion_param) - 
         logcohesion(A0[idx_j2, idx_j2, drop = F], deg0[idx_j2], cohesion_param) + 
         nsptrees_igraph(make_quotient_graph(g0, z, return.igraph = T), log = T) -  
-        nsptrees_igraph(make_quotient_graph(g0, z_star, return.igraph = T), log = T)
+        nsptrees_igraph(make_quotient_graph(g0, z_star, return.igraph = T), log = T) + 
+        logmarginal_categorical_d(Y[idx_jstar,, drop = F], nclass, a0) - 
+        logmarginal_categorical_d(Y[idx_j1,, drop = F], nclass, a0) - 
+        logmarginal_categorical_d(Y[idx_j2,, drop = F], nclass, a0)
       
       # # compute log-proposal ratio
       if(k == 2) {pa_new = 0.9
@@ -190,7 +225,10 @@ graphppm_prior <- function(graph0, logcohesion, cohesion_param = NULL,
         logcohesion(A0[idx_j1, idx_j1, drop = F], deg0[idx_j1], cohesion_param) - 
         logcohesion(A0[idx_j2, idx_j2, drop = F], deg0[idx_j2], cohesion_param) + 
         nsptrees_igraph(make_quotient_graph(g0, z, return.igraph = T), log = T) -  
-        nsptrees_igraph(make_quotient_graph(g0, z_star, return.igraph = T), log = T)
+        nsptrees_igraph(make_quotient_graph(g0, z_star, return.igraph = T), log = T) +
+        logmarginal_categorical_d(Y[idx_jstar,, drop = F], nclass, a0) - 
+        logmarginal_categorical_d(Y[idx_j1,, drop = F], nclass, a0) - 
+        logmarginal_categorical_d(Y[idx_j2,, drop = F], nclass, a0)
       
       # split cluster by choosing a within-cluster edge
       if(sum(sptree_star[,"iscrossing"]==0) > 1){
@@ -218,7 +256,10 @@ graphppm_prior <- function(graph0, logcohesion, cohesion_param = NULL,
         logcohesion(A0[idxstar2,idxstar2, drop = F], deg0[idxstar2], cohesion_param) - 
         logcohesion(A0[idx_j, idx_j, drop = F], deg0[idx_j], cohesion_param) + # can be precalculated
         nsptrees_igraph(make_quotient_graph(g0, z_star, return.igraph = T), log = T) -  # can be precalculated
-        nsptrees_igraph(make_quotient_graph(g0, z_starstar, return.igraph = T), log = T)
+        nsptrees_igraph(make_quotient_graph(g0, z_starstar, return.igraph = T), log = T) +
+        logmarginal_categorical_d(Y[idxstar1,, drop = F], nclass, a0) +
+        logmarginal_categorical_d(Y[idxstar2,, drop = F], nclass, a0) - 
+        logmarginal_categorical_d(Y[idx_j,, drop = F], nclass, a0)
       
       logprop_ratio = 0
       #acceptance probability
@@ -245,20 +286,35 @@ graphppm_prior <- function(graph0, logcohesion, cohesion_param = NULL,
     if(iter > nburn & (iter - nburn) %% nthin == 0) {
       counter = counter + 1
       save_z[counter,] <- z
+      # log likelihood calculation
+      for(j in 1:k){
+        idx = which(z==j)
+        nj = length(idx)
+        temp = numeric(nj)
+        for(dd in 1:d){
+          # composition sampling theta (probability vector for categories)
+          an = rep(a0, nclass[dd])+ tabulate(Y[idx,dd], nbins = nclass[dd]) # replace alpha prior in place of 1 if needed 
+          theta_post = as.numeric(LaplacesDemon::rdirichlet(1, an)) # nclass[dd] dimensional prob. vector
+          temp = temp + log(theta_post[Y[idx,dd]])
+        }
+        save_loglik[counter,idx] = temp
+      }
+      
     }
-    # if(verbose){
-    #   if(imcmc %% 1000 == 0){
-    #     cat("iter",imcmc,",",paste(z)," k:",k,"\n")
-    #     V(graph0)$color <- z
-    #     plot(graph0, layout = coords, main = paste("iteration",iter))
-    #     readline(prompt="Press [enter] to continue")
-    #   }
-    # }
     if(iter %% 1000 == 0) cat(paste("iteration",iter,"done\n"))
+  }
+  
+  dic = function(LL){# see examples in LaplacesDemon::WAIC
+    Dev <- -2*colSums(LL)
+    DIC <- list(dic=mean(Dev) + var(Dev)/2, Dbar=mean(Dev), pV=var(Dev)/2)
+    DIC
   }
   
   out = list()
   out$save_z = save_z
+  out$save_loglik = save_loglik
+  out$WAIC = LaplacesDemon::WAIC(t(save_loglik))
+  out$DIC = dic(t(save_loglik))
   out$kpmf = table(apply(save_z, 1, function(x) (length(unique(x)))))/nsave
   out$simmatrix = salso::psm(save_z)
   out$move_cnt = move_cnt

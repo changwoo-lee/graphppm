@@ -4,7 +4,13 @@
 \alias{runifsptree}
 \title{Draw a uniform spanning tree using Wilson's algorithm}
 \usage{
-runifsptree(g0, root = NULL, ordering = NULL, maxiter = NULL)
+runifsptree(
+  g0,
+  root = NULL,
+  ordering = NULL,
+  maxiter = NULL,
+  return.igraph = F
+)
 }
 \arguments{
 \item{g0}{\emph{igraph object}, Graph.}
@@ -12,6 +18,8 @@ runifsptree(g0, root = NULL, ordering = NULL, maxiter = NULL)
 \item{root}{\emph{int}, (optional) Root node. Recommended as a node with max degree}
 
 \item{ordering}{\emph{vector<int> (n)}, (optional) Ordering of nodes. Recommended as a breadth-first search ordering at the root.}
+
+\item{return.igraph}{\emph{logical}, return igraph, otherwise edgelist}
 }
 \value{
 \emph{matrix<int> (n-1,2)}, Edge list of the sampled tree.

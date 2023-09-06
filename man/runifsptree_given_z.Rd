@@ -4,7 +4,7 @@
 \alias{runifsptree_given_z}
 \title{Draw a uniform spanning tree conditional on a partition using Wilson's algorithm}
 \usage{
-runifsptree_given_z(g0, z, return.igraph = T)
+runifsptree_given_z(g0, z, return.igraph = F)
 }
 \arguments{
 \item{g0}{\emph{igraph object}, Graph.}

@@ -13,19 +13,25 @@ logmarginal_categorical_d <- function(data, nclass, a0 = rep(1, ncol(data))){
   summand
 }
 
-#' GraphPPM Gaussian response analysis using MCMC
+#' GraphPPM categorical response analysis using MCMC
 #' 
-#' @param graph0 igraph object, base graph
-#' @param logcohesion logcohesion function
-#' @param Y 
-#' @param cohesion_param cohesion function parameters
-#' @param nsave number of samples
-#' @param nburn 
-#' @param nthin 
-#' @param z_init 
+#' Node attribute is modeled with independent categorical distribution, with symmetric Dirichlet prior. 
+#' i.e. Y_{il} ~ Categorical(theta_1, ..., theta_{N_l}), independently across i and l, where N_l = nclass[l]
+#' and prior (theta_1,...theta_{N_l}) ~ Dirichlet(a0[l], ..., a0[l])
+#' 
+#' @param graph0 *igraph* igraph object, base graph
+#' @param Y *matrix&lt;int&gt; (n,d)* each row corresponds to d independent categorical node attributes. (NOTE:  this is not d classes) 
+#' @param logcohesion *function* logcohesion function 
+#' @param cohesion_param *list* cohesion function parameters
+#' @param nclass *vector&lt;int&gt; (d)*, number of classes for each categorical attribute
+#' @param a0 *vector&lt;num&gt; (d)*, symmetric Dirichlet parameter for each categorical attribute
+#' @param nsave *int* number of samples
+#' @param nburn *int* number of burn-in iterations
+#' @param nthin *int* number of thin-in rate. Total iterations: nburn + nsave*nthin
+#' @param z_init *vector&lt;int&gt; (n)*, initial partition
 #'
-#' @return
-#' @import igraph salso 
+#' @return 
+#' @import igraph salso LaplacesDemon
 #' @export
 #'
 #' @examples

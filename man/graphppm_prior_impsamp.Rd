@@ -11,26 +11,23 @@ graphppm_prior_impsamp(
   nsave = 2000,
   kvals = NULL,
   kprobs = NULL,
-  nCores = 1,
-  ...
+  nCores = 1
 )
 }
 \arguments{
-\item{graph0}{igraph object, base graph}
+\item{graph0}{\emph{igraph} igraph object, base graph}
 
-\item{logcohesion}{logcohesion function}
+\item{logcohesion}{\emph{function} logcohesion function}
 
-\item{cohesion_param}{cohesion function parameters}
+\item{cohesion_param}{\emph{list} cohesion function parameters}
 
-\item{nsave}{number of samples}
+\item{nsave}{\emph{int} number of samples}
 
-\item{kvals}{range of k}
+\item{kvals}{\emph{vector<int>} range of k}
 
-\item{kprobs}{unnormalized probability of q(k)}
+\item{kprobs}{*vector<num>*unnormalized probability of q(k)}
 
-\item{nCores}{default 1, set 2 or more lead to parallel run}
-
-\item{...}{}
+\item{nCores}{\emph{int} default 1, set 2 or more lead to parallel run}
 }
 \description{
 GraphPPM prior analysis with importance sampler

@@ -11,26 +11,23 @@ graphppm_prior(
   nsave = 1000,
   nburn = 1000,
   nthin = 1,
-  z_init = NULL,
-  ...
+  z_init = NULL
 )
 }
 \arguments{
-\item{graph0}{igraph object, base graph}
+\item{graph0}{\emph{igraph} igraph object, base graph}
 
-\item{logcohesion}{logcohesion function}
+\item{logcohesion}{\emph{function} logcohesion function}
 
-\item{cohesion_param}{cohesion function parameters}
+\item{cohesion_param}{\emph{list} cohesion function parameters}
 
-\item{nsave}{number of samples}
+\item{nsave}{\emph{int} number of samples}
 
-\item{nburn}{}
+\item{nburn}{\emph{int} number of burn-in iterations}
 
-\item{nthin}{}
+\item{nthin}{\emph{int} number of thin-in rate. Total iterations: nburn + nsave*nthin}
 
-\item{z_init}{}
-
-\item{...}{}
+\item{z_init}{\emph{vector<int> (n)}, initial partition}
 }
 \description{
 GraphPPM prior analysis using MCMC

@@ -1,12 +1,12 @@
 #' GraphPPM prior analysis using MCMC
 #' 
-#' @param graph0 igraph object, base graph
-#' @param logcohesion logcohesion function
-#' @param cohesion_param cohesion function parameters
-#' @param nsave number of samples
-#' @param nburn 
-#' @param nthin 
-#' @param z_init 
+#' @param graph0 *igraph* igraph object, base graph
+#' @param logcohesion *function* logcohesion function 
+#' @param cohesion_param *list* cohesion function parameters
+#' @param nsave *int* number of samples
+#' @param nburn *int* number of burn-in iterations
+#' @param nthin *int* number of thin-in rate. Total iterations: nburn + nsave*nthin
+#' @param z_init *vector&lt;int&gt; (n)*, initial partition
 #'
 #' @return
 #' @import igraph salso 

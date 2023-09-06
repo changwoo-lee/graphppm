@@ -12,11 +12,11 @@ nsptrees_igraph(g, log = T, sparse = F)
 \arguments{
 \item{A}{\emph{matrix<int> (n,n)}, Adjacency matrix, can be a sparse format.}
 
-\item{log}{\emph{logical}, If TRUE (default), returns log value.}
+\item{log}{\emph{logical}, If TRUE (default T), returns log value.}
 
 \item{g}{\emph{igraph object}, Graph}
 
-\item{sparse}{\emph{logical}, If TRUE (default), uses sparse matrix calculation.}
+\item{sparse}{\emph{logical}, If TRUE (default F), uses sparse matrix calculation.}
 }
 \value{
 \emph{double}, The (log of) number of spanning trees

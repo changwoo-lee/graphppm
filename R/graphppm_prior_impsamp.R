@@ -1,12 +1,12 @@
 #' GraphPPM prior analysis with importance sampler
 #'
-#' @param graph0 igraph object, base graph
-#' @param logcohesion logcohesion function
-#' @param cohesion_param cohesion function parameters
-#' @param nsave number of samples
-#' @param kvals range of k
-#' @param kprobs unnormalized probability of q(k)
-#' @param nCores default 1, set 2 or more lead to parallel run
+#' @param graph0 *igraph* igraph object, base graph
+#' @param logcohesion *function* logcohesion function 
+#' @param cohesion_param *list* cohesion function parameters
+#' @param nsave *int* number of samples
+#' @param kvals *vector&lt;int&gt;* range of k
+#' @param kprobs *vector&lt;num&gt;*unnormalized probability of q(k)
+#' @param nCores *int* default 1, set 2 or more lead to parallel run
 #'
 #' @return
 #' @import igraph matrixStats doParallel

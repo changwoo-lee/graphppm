@@ -1,10 +1,18 @@
-
-# modularity 
-# log(c) where c = c0^psi, and
-# c0(G_j, \partial G_j) = exp( resolution * (2|E_j| + partial G_j)^2/(2m)^2 - (2*|E_j|)/(2m)
-# default resolution = 1
-# REQUIRE argument m, the number of edges in the original graph
-#
+#' Modularity cohesion function (loss-based)
+#'
+#' Return c(G_j, \partial G_j) = exp(-psi*L)
+#' where L = resolution * (2|E_j| + partial G_j)^2/(2m)^2 - (2*|E_j|)/(2m)
+#' 
+#'
+#' @param A  *matrix&lt;int&gt; (nj,nj)*, adjacency matrix, can be a sparse format.
+#' @param deg *vec&lt;int&gt*, vector of node degrees with length nj
+#' @param cohesion_param *list*, must include "psi", "resolution", and "m" parameters. 
+#' @param minus_logtau *logical* if true, return log c(Gj) - tau(Gj) 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 logcohesion_modularity <- function(A, deg, cohesion_param, minus_logtau = T){
   
   psi = cohesion_param$psi
@@ -22,12 +30,23 @@ logcohesion_modularity <- function(A, deg, cohesion_param, minus_logtau = T){
   return(out)
 }
 
-# constant Potts model 
-# log(c) where c = alpha * c0^psi, and
-# c0(G_j, \partial G_j) = resolution * |V_j|^2 - (2*|E_j|)
-# default resolution = quantile(degree(g))[2] / (degree(g) - 1) ? (See ?igraph::cluster_leiden)
-# require argument m, the number of edges in the original graph
-
+ 
+#' Cohesion based on constant Potts model (loss-based)
+#'
+#' log(c) where c = alpha * c0^psi, and
+#' c0(G_j, \partial G_j) = resolution * |V_j|^2 - (2*|E_j|)
+#' default resolution = quantile(degree(g))[2] / (degree(g) - 1) ? (See ?igraph::cluster_leiden)
+#' require argument m, the number of edges in the original graph
+#'
+#' @param A 
+#' @param deg 
+#' @param cohesion_param 
+#' @param minus_logtau 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 logcohesion_CPM <- function(A, deg, cohesion_param, minus_logtau = T){
   
   psi = cohesion_param$psi
@@ -45,13 +64,17 @@ logcohesion_CPM <- function(A, deg, cohesion_param, minus_logtau = T){
 }
 
 
-
-# 2. spanning tree based cohesions ##
-#
-# log(c) where c(G_j) = alpha * (tau(G_j))^psi
-# 
-# if div_by_nsptree = T, return log(c) - log(tau)
-
+#' spanning tree cohesion (tree-based)
+#'
+#' @param A 
+#' @param deg 
+#' @param cohesion_param 
+#' @param minus_logtau 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 logcohesion_tau <- function(A, deg = NULL, cohesion_param, minus_logtau = T){
   alpha = cohesion_param$alpha
   
@@ -73,10 +96,17 @@ logcohesion_tau <- function(A, deg = NULL, cohesion_param, minus_logtau = T){
 
 
 
-# log(c) where c(G_j) = alpha * (|E_j|*tau(G_j))^psi
-# 
-# if div_by_nsptree = T, return log(c) - log(tau)
-
+#' spanning tree cohesion (tree-based)
+#'
+#' @param A 
+#' @param deg 
+#' @param cohesion_param 
+#' @param minus_logtau 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 logcohesion_etau <- function(A, deg = NULL, cohesion_param, minus_logtau = T){
   alpha = cohesion_param$alpha
   
@@ -99,11 +129,17 @@ logcohesion_etau <- function(A, deg = NULL, cohesion_param, minus_logtau = T){
   return(out)
 }
 
-
-# log(c) where c(G_j) = alpha * (|V_j|^(-1/2)|E_j|*tau(G_j))^psi
-# 
-# if div_by_nsptree = T, return log(c) - log(tau)
-
+#' spanning tree cohesion (tree-based)
+#'
+#' @param A 
+#' @param deg 
+#' @param cohesion_param 
+#' @param minus_logtau 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 logcohesion_vetau <- function(A, deg = NULL, cohesion_param, minus_logtau = T){
   alpha = cohesion_param$alpha
   
@@ -127,10 +163,17 @@ logcohesion_vetau <- function(A, deg = NULL, cohesion_param, minus_logtau = T){
 }
 
 
-
-### misc ###############
-# log(c) where c(G_j) = alpha * Gamma(n_j)^psi
-
+#' misc cohesion 
+#'
+#' @param A 
+#' @param deg 
+#' @param cohesion_param 
+#' @param minus_logtau 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 logcohesion_gamma <- function(A, deg = NULL, cohesion_param, minus_logtau = T){
   alpha = cohesion_param$alpha
   

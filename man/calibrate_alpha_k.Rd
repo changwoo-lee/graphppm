@@ -7,9 +7,9 @@
 calibrate_alpha_k(fit, alpha)
 }
 \arguments{
-\item{fit}{fitted object using importance sampler. Must have "save_logweight", "save_k", and "cohesion_param$alpha"}
+\item{fit}{\emph{list} fitted object using importance sampler. Must have "save_logweight", "save_k", and "cohesion_param$alpha"}
 
-\item{alpha}{vector of alpha values.}
+\item{alpha}{\emph{vector<num>} vector of alpha values.}
 }
 \description{
 Calibration of alpha based on k, the number of clusters

@@ -36,7 +36,7 @@ graphppm_prior_impsamp <- function(graph0, logcohesion, cohesion_param = NULL, n
   m = ecount(graph0)
   
   if(is.null(kvals)) kvals = 1:(n-1)
-  if(is.null(kprobs)) kprobs = 0.7^kvals
+  if(is.null(kprobs)) kprobs = 0.9^kvals
   
   E0 = as_edgelist(graph0, names =F)
   A0 = as_adj(graph0, sparse = F, names = F) # sparse = F, lookup speed is faster in non-sparse form

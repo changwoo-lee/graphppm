@@ -1,7 +1,7 @@
 #' Calibration of alpha based on k, the number of clusters
 #'
-#' @param fit fitted object using importance sampler. Must have "save_logweight", "save_k", and "cohesion_param$alpha"
-#' @param alpha vector of alpha values. 
+#' @param fit *list* fitted object using importance sampler. Must have "save_logweight", "save_k", and "cohesion_param$alpha"
+#' @param alpha *vector&lt;num&gt;* vector of alpha values. 
 #'
 #' @return 
 #' @export
@@ -29,6 +29,7 @@ calibrate_alpha_k <- function(fit, alpha){
   # (9.9) of owen importance sampling paper
   k_alpha_var = exp(matrixStats::colLogSumExps( 2*mat1_normalized + 2*log(abs(exp(mat2) - matrix(k_alpha, nrow = nsave, ncol = nalpha, byrow = T))))) 
   out = list()
+  out$alpha = alpha
   out$ncluster_mean = k_alpha
   out$ncluster_mean_sd = sqrt(k_alpha_var)
   out$nsave = nsave
